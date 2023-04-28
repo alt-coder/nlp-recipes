@@ -31,6 +31,8 @@ class RougeExt(Rouge):
     DEFAULT_METRICS = {"rouge-n"}
     DEFAULT_N = 1
     STATS = ["f", "p", "r"]
+    
+    
     AVAILABLE_METRICS = {"rouge-n", "rouge-l", "rouge-w"}
     AVAILABLE_LENGTH_LIMIT_TYPES = {"words", "bytes"}
 
@@ -118,6 +120,7 @@ class RougeExt(Rouge):
                 AVAILABLE_LENGTH_LIMIT_TYPES
             ValueError: raises exception if weight_factor < 0
         """
+#        super().__init__()
         supported_langauges = ["hi"]
         if language not in supported_langauges and not all(
             [sentence_split_func, word_tokenize_func, remove_char_pattern]
@@ -134,6 +137,8 @@ class RougeExt(Rouge):
                 raise ValueError("Unknown metric '{}'".format(m))
 
         self.max_n = max_n if "rouge-n" in self.metrics else None
+#        self.stats = ["f", "p", "r"]
+#        stats = ["f", "p", "r"]
         # Add all rouge-n metrics
         if self.max_n is not None:
             index_rouge_n = self.metrics.index("rouge-n")
@@ -160,6 +165,8 @@ class RougeExt(Rouge):
             raise ValueError("ROUGE-W weight factor must greater than 0.")
 
         self.language = language
+#        self.raw_results = False
+#        self.exclusive=
         if sentence_split_func is None:
             self.sentence_split = RougeExt.SENTENCE_SPLIT_DICT[self.language]
         else:
@@ -335,7 +342,12 @@ class RougeExt(Rouge):
         Raises:
           ValueError: raises exception if a param has len <= 0
         """
-
+#        print(len(evaluated_sentences))
+#        print(len(reference_sentences))
+        te = " ".join(evaluated_sentences)
+        tr = " ".join(reference_sentences)
+        evaluated_sentences = [te]
+        reference_sentences = [tr]
         def _lcs(x, y):
             m = len(x)
             n = len(y)
@@ -434,7 +446,7 @@ class RougeExt(Rouge):
                     len(reference_sentence_tokens),
                     len(evaluated_sentence_tokens),
                 )
-
+#            print(lcs_dirs)
             overlapping_count_length = 0
             for ref_token_id, val in enumerate(hit_mask):
                 if val == 1:
@@ -452,10 +464,11 @@ class RougeExt(Rouge):
                                 overlapping_count_length = 0
                         else:
                             overlapping_count += 1
+#                            print(token,end=' ')        
 
         if use_WLCS:
             reference_count = reference_count ** weight_factor
-
+#        print()
         return evaluated_count, reference_count, overlapping_count
 
     def _preprocess_summary_as_a_whole(self, summary):

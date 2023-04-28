@@ -119,7 +119,7 @@ def compute_rouge_python(cand, ref, is_input_files=False, language="en"):
 
     if language == "en":
         evaluator = Rouge(
-            metrics=["rouge-n", "rouge-l"], max_n=2, limit_length=False, apply_avg=True
+            metrics=["rouge-n", "rouge-l"], max_n=2, limit_length=False, apply_avg=True,stemming=True
         )
     else:
         evaluator = RougeExt(
@@ -128,6 +128,7 @@ def compute_rouge_python(cand, ref, is_input_files=False, language="en"):
             limit_length=False,
             apply_avg=True,
             language=language,
+            stemming=True
         )
 
     scores = evaluator.get_scores(candidates, [[it] for it in references])
